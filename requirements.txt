@@ -1,0 +1,6 @@
+psutil
+pandas
+matplotlib
+numpy
+scapy
+dnspython
