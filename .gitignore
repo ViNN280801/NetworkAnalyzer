@@ -12,3 +12,12 @@ logs/
 # Data files
 results/
 .csv
+
+# Any build files
+build/
+
+# Pyinstaller directory
+dist/
+
+# Ignoring pictures
+.png

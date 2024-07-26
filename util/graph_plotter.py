@@ -10,9 +10,13 @@ class GraphPlotter:
         self.network_usage_file = network_usage_file
         self.network_speed_file = network_speed_file
 
-    def plot_graphs(self, xticks: int):
+    def plot_graphs(self, xticks: int, save_path: str = "network_graphs.png"):
         """
-        Plots the network usage and speed graphs from the given CSV files.
+        Plots the network usage and speed graphs from the given CSV files and saves them as a PNG file.
+
+        Parameters:
+        xticks (int): Interval of x-axis ticks
+        save_path (str): Path to save the PNG file
         """
         try:
             # Check if the files exist before attempting to read them
@@ -85,6 +89,8 @@ class GraphPlotter:
             plt.grid(True)
 
             plt.tight_layout()
+            plt.savefig(save_path)
+            logging.info(f"Plots saved to the file: {save_path}")
             plt.show()
         except Exception as e:
             logging.error(f"Error plotting graphs: {e}")
