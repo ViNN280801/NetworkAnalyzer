@@ -1,0 +1,14 @@
+# Python cache file
+__pycache__/
+
+# Visual Studio & Visual Studio Code files
+.vs/
+.vscode/
+
+# Log files
+logs/
+.log
+
+# Data files
+results/
+.csv
