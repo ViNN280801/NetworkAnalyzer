@@ -29,7 +29,6 @@ if __name__ == "__main__":
     logger = setup_logger("main_logger", log_filename)
 
     try:
-        raise ValueError("Hello")
         menu = Menu()
         menu.show_menu()
     except Exception as e:
