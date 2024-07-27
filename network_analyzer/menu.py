@@ -34,6 +34,7 @@ class Menu:
         self.analyze_usage = True
         self.frequency = 1
         self.xtick_interval = 5
+        self.infinite_analysis = True
         self.speed_logger = None
         self.usage_logger = None
         self.usage_analyzer = None
@@ -66,6 +67,7 @@ class Menu:
     def show_settings(self):
         print("\nCurrent Settings:")
         print(f"Analysis Duration: {self.analysis_duration} minutes")
+        print(f"Infinite Analysis: {'Yes' if self.infinite_analysis else 'No'}")
         print(f"Analyze Speed: {'Yes' if self.analyze_speed else 'No'}")
         print(f"Analyze Network Usage: {'Yes' if self.analyze_usage else 'No'}")
         print(f"Frequency of Measurements: {self.frequency} minutes")
@@ -79,7 +81,8 @@ class Menu:
             print("3. Analyze network usage? (yes/no)")
             print("4. Set frequency of measurements (in minutes)")
             print("5. Set X-tick interval for graphs")
-            print("6. Back to main menu")
+            print("6. Infinite analysis? (yes/no)")
+            print("7. Back to main menu")
             choice = input("Enter your choice: ")
 
             if choice == "1":
@@ -93,9 +96,20 @@ class Menu:
             elif choice == "5":
                 self.set_xtick_interval()
             elif choice == "6":
+                self.set_infinite_analysis()
+            elif choice == "7":
                 break
             else:
                 print("Invalid choice. Please try again.")
+
+    def set_infinite_analysis(self):
+        choice = input("Infinite analysis? (yes/no): ").strip().lower()
+        if choice in ["y", "yes"]:
+            self.infinite_analysis = True
+        elif choice in ["n", "no"]:
+            self.infinite_analysis = False
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
 
     def set_analysis_duration(self):
         try:
@@ -176,9 +190,6 @@ class Menu:
             speed_csv_file if self.analyze_speed else None,
         )
 
-        if hasattr(signal, "SIGALRM"):
-            signal.alarm(self.analysis_duration * 60)
-
         if self.usage_logger:
             self.usage_logger.info(
                 f"{NETWORK_USAGE_ANALYZER}: Starting the analysis..."
@@ -188,9 +199,16 @@ class Menu:
                 f"{NETWORK_SPEED_ANALYZER}: Starting the analysis..."
             )
 
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+        if not self.infinite_analysis:
+            if hasattr(signal, "SIGALRM"):
+                signal.alarm(self.analysis_duration * 60)
+
+        try:
+            while True:
+                schedule.run_pending()
+                time.sleep(1)
+        except KeyboardInterrupt:
+            self.exit_gracefully()
 
     def usage_job(self):
         sent_bytes, recv_bytes = self.usage_analyzer.get_network_usage()
