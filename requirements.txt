@@ -2,5 +2,6 @@ psutil
 pandas
 matplotlib
 numpy
-scapy
-dnspython
+schedule
+speedtest
+pyinstaller
