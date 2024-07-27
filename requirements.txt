@@ -5,3 +5,4 @@ numpy
 schedule
 speedtest-cli
 pyinstaller
+PyQt5
