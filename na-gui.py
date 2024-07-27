@@ -16,12 +16,12 @@ from PyQt5.QtWidgets import (
     QToolButton,
     QTabWidget,
     QFileDialog,
-    QFrame,
+    QComboBox,
 )
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import QTimer
 from network_analyzer import NetworkUsageAnalyzer, NetworkSpeedAnalyzer
-from util import GraphPlotter
+from util import GraphPlotter, I18N
 
 
 class QTextEditLogger(logging.Handler):
@@ -73,11 +73,14 @@ class NetworkAnalyzerGUI(QWidget):
         plotter (GraphPlotter): Plotter for generating graphs from analysis data.
     """
 
-    def __init__(self):
+    def __init__(self, lang="en"):
         """
         Initialize the NetworkAnalyzerGUI with default settings.
         """
         super().__init__()
+
+        self.language = lang
+        self.i18n = I18N(lang)
 
         self.analysis_duration = 60
         self.analyze_speed = True
@@ -94,33 +97,64 @@ class NetworkAnalyzerGUI(QWidget):
         self.initUI()
 
     def initUI(self):
-        """
-        Initialize the user interface.
-        """
         try:
             self.setWindowTitle("Network Analyzer")
             self.setGeometry(100, 100, 800, 600)
-            self.setWindowIcon(QIcon("imgs/na-icon.png"))
+            self.setWindowIcon(QIcon("imgs/na.ico"))
 
             self.tabs = QTabWidget()
             self.settings_tab = QWidget()
             self.plots_tab = QWidget()
 
-            self.tabs.addTab(self.settings_tab, "Settings")
-            self.tabs.addTab(self.plots_tab, "Plots")
+            self.tabs.addTab(self.settings_tab, self.i18n.get("settings_tab"))
+            self.tabs.addTab(self.plots_tab, self.i18n.get("plots_tab"))
+
+            layout = QVBoxLayout()
+
+            self.lang_label = QLabel()
+            self.lang_label.setText(self.i18n.get("menu_change_language"))
+            layout.addWidget(self.lang_label)
+            
+            self.language_combo = QComboBox()
+            self.language_combo.addItem("English", "en")
+            self.language_combo.addItem("Русский", "ru")
+            self.language_combo.currentIndexChanged.connect(self.change_language)
+            layout.addWidget(self.language_combo)
+
+            layout.addWidget(self.tabs)
+            self.setLayout(layout)
 
             self.initSettingsTab()
             self.initPlotsTab()
-
-            layout = QVBoxLayout()
-            layout.addWidget(self.tabs)
-            self.setLayout(layout)
         except Exception as e:
             QMessageBox.critical(
-                self, "InternalError", f"An internal error occurred: {e}"
+                self,
+                self.i18n.get("internal_error"),
+                f"{self.i18n.get('internal_error_occurred')}: {e}",
             )
-            logging.error(f"An internal error occurred during UI initialization: {e}")
+            logging.error(f"{self.i18n.get('internal_error_occurred')}: {e}")
 
+    def change_language(self):
+        self.language = self.language_combo.currentData()
+        self.i18n = I18N(self.language)
+        QMessageBox.information(self, self.i18n.get("menu_change_language"), f"Language changed to {self.language_combo.currentText()}")
+        self.retranslate_ui()
+
+    def retranslate_ui(self):
+        self.lang_label.setText(self.i18n.get("menu_change_language"))
+        self.infinite_checkbox.setText(self.i18n.get("infinite_analysis"))
+        self.duration_label.setText(self.i18n.get("analysis_duration"))
+        self.speed_checkbox.setText(self.i18n.get("analyze_speed"))
+        self.usage_checkbox.setText(self.i18n.get("analyze_usage"))
+        self.frequency_label.setText(self.i18n.get("measurement_frequency"))
+        self.xtick_label.setText(self.i18n.get("xtick_interval"))
+        self.start_button.setText(self.i18n.get("start_analysis"))
+        self.stop_button.setText(self.i18n.get("stop_analysis"))
+        self.select_files_button.setText(self.i18n.get("select_files"))
+        self.clear_plots_button.setText(self.i18n.get("clear_plots"))
+        self.tabs.setTabText(self.tabs.indexOf(self.settings_tab), self.i18n.get("settings_tab"))
+        self.tabs.setTabText(self.tabs.indexOf(self.plots_tab), self.i18n.get("plots_tab"))
+    
     def initSettingsTab(self):
         """
         Initialize the Settings tab.

@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from .network_usage_analyzer import NetworkUsageAnalyzer, NETWORK_USAGE_ANALYZER
 from .network_speed_analyzer import NetworkSpeedAnalyzer, NETWORK_SPEED_ANALYZER
-from util import GraphPlotter
+from util import GraphPlotter, I18N
 
 
 def setup_logger(name, log_file, level=logging.INFO):
@@ -28,7 +28,8 @@ def setup_logger(name, log_file, level=logging.INFO):
 
 
 class Menu:
-    def __init__(self):
+    def __init__(self, lang="en"):
+        self.i18n = I18N(lang)
         self.analysis_duration = 60
         self.analyze_speed = True
         self.analyze_usage = True
@@ -47,11 +48,12 @@ class Menu:
     def show_menu(self):
         while True:
             print("\nMenu:")
-            print("1. Start scan")
-            print("2. Change settings")
-            print("3. Show settings")
-            print("4. Exit")
-            choice = input("Enter your choice: ")
+            print(f"1. {self.i18n.get('menu_start_scan')}")
+            print(f"2. {self.i18n.get('menu_change_settings')}")
+            print(f"3. {self.i18n.get('menu_show_settings')}")
+            print(f"4. {self.i18n.get('menu_exit')}")
+            print(f"5. Change Language")
+            choice = input(self.i18n.get("menu_enter_choice"))
 
             if choice == "1":
                 self.start_analysis()
@@ -61,29 +63,52 @@ class Menu:
                 self.show_settings()
             elif choice == "4":
                 self.exit_program()
+            elif choice == "5":
+                self.change_language()
             else:
-                print("Invalid choice. Please try again.")
+                print(self.i18n.get("menu_invalid_choice"))
+
+    def change_language(self):
+        print("Select language: ")
+        print("1. English")
+        print("2. Russian")
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            self.language = "en"
+        elif choice == "2":
+            self.language = "ru"
+        else:
+            print("Invalid choice. Please try again.")
+            return
+        self.i18n = I18N(self.language)
+        print(f"Language changed to {self.language}")
 
     def show_settings(self):
-        print("\nCurrent Settings:")
-        print(f"Analysis Duration: {self.analysis_duration} minutes")
-        print(f"Infinite Analysis: {'Yes' if self.infinite_analysis else 'No'}")
-        print(f"Analyze Speed: {'Yes' if self.analyze_speed else 'No'}")
-        print(f"Analyze Network Usage: {'Yes' if self.analyze_usage else 'No'}")
-        print(f"Frequency of Measurements: {self.frequency} minutes")
-        print(f"X-Tick Interval for Graphs: {self.xtick_interval}")
+        print(f"\n{self.i18n.get('current_settings')}:")
+        print(f"{self.i18n.get('analysis_duration')}: {self.analysis_duration} minutes")
+        print(
+            f"{self.i18n.get('infinite_analysis')}: {self.i18n.get('yes') if self.infinite_analysis else self.i18n.get('no')}"
+        )
+        print(
+            f"{self.i18n.get('analyze_speed')}: {self.i18n.get('yes') if self.analyze_speed else self.i18n.get('no')}"
+        )
+        print(
+            f"{self.i18n.get('analyze_usage')}: {self.i18n.get('yes') if self.analyze_usage else self.i18n.get('no')}"
+        )
+        print(f"{self.i18n.get('measurement_frequency')}: {self.frequency} minutes")
+        print(f"{self.i18n.get('xtick_interval')}: {self.xtick_interval}")
 
     def change_settings(self):
         while True:
             print("\nSettings:")
-            print("1. Set analysis duration (in minutes)")
-            print("2. Analyze speed? (yes/no)")
-            print("3. Analyze network usage? (yes/no)")
-            print("4. Set frequency of measurements (in minutes)")
-            print("5. Set X-tick interval for graphs")
-            print("6. Infinite analysis? (yes/no)")
-            print("7. Back to main menu")
-            choice = input("Enter your choice: ")
+            print(f"1. {self.i18n.get('set_analysis_duration')}")
+            print(f"2. {self.i18n.get('analyze_speed_question')}")
+            print(f"3. {self.i18n.get('analyze_usage_question')}")
+            print(f"4. {self.i18n.get('set_frequency')}")
+            print(f"5. {self.i18n.get('set_xtick_interval')}")
+            print(f"6. {self.i18n.get('infinite_analysis')}")
+            print(f"7. {self.i18n.get('menu_exit')}")
+            choice = input(self.i18n.get("menu_enter_choice"))
 
             if choice == "1":
                 self.set_analysis_duration()
@@ -100,60 +125,68 @@ class Menu:
             elif choice == "7":
                 break
             else:
-                print("Invalid choice. Please try again.")
+                print(self.i18n.get("menu_invalid_choice"))
 
     def set_infinite_analysis(self):
-        choice = input("Infinite analysis? (yes/no): ").strip().lower()
-        if choice in ["y", "yes"]:
+        choice = (
+            input(f"{self.i18n.get('infinite_analysis')}? (yes/no): ").strip().lower()
+        )
+        if choice in ["y", "yes", "д", "да"]:
             self.infinite_analysis = True
-        elif choice in ["n", "no"]:
+        elif choice in ["n", "no", "н", "нет"]:
             self.infinite_analysis = False
         else:
-            print("Invalid input. Please enter 'yes' or 'no'.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def set_analysis_duration(self):
         try:
             self.analysis_duration = int(
-                input("Enter analysis duration (in minutes): ")
+                input(f"{self.i18n.get('analysis_duration')}: ")
             )
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def set_analyze_speed(self):
-        choice = input("Analyze speed? (yes/no): ").strip().lower()
-        if choice in ["y", "yes"]:
+        choice = (
+            input(f"{self.i18n.get('analyze_speed_question')}? (yes/no): ")
+            .strip()
+            .lower()
+        )
+        if choice in ["y", "yes", "д", "да"]:
             self.analyze_speed = True
-        elif choice in ["n", "no"]:
+        elif choice in ["n", "no", "н", "нет"]:
             self.analyze_speed = False
         else:
-            print("Invalid input. Please enter 'yes' or 'no'.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def set_analyze_usage(self):
-        choice = input("Analyze network usage? (yes/no): ").strip().lower()
-        if choice in ["y", "yes"]:
+        choice = (
+            input(f"{self.i18n.get('analyze_usage_question')}? (yes/no): ")
+            .strip()
+            .lower()
+        )
+        if choice in ["y", "yes", "д", "да"]:
             self.analyze_usage = True
-        elif choice in ["n", "no"]:
+        elif choice in ["n", "no", "н", "нет"]:
             self.analyze_usage = False
         else:
-            print("Invalid input. Please enter 'yes' or 'no'.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def set_frequency(self):
         try:
-            self.frequency = int(
-                input("Enter frequency of measurements (in minutes): ")
-            )
+            self.frequency = int(input(f"{self.i18n.get('set_frequency')}: "))
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def set_xtick_interval(self):
         try:
-            self.xtick_interval = int(input("Enter X-tick interval for graphs: "))
+            self.xtick_interval = int(input(f"{self.i18n.get('set_xtick_interval')}: "))
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print(self.i18n.get("menu_invalid_choice"))
 
     def start_analysis(self):
         if not self.analyze_speed and not self.analyze_usage:
-            print("No analysis selected. Exiting.")
+            print(self.i18n.get("enable_at_least_one_analysis"))
             return
 
         if not os.path.exists("logs"):
@@ -191,13 +224,9 @@ class Menu:
         )
 
         if self.usage_logger:
-            self.usage_logger.info(
-                f"{NETWORK_USAGE_ANALYZER}: Starting the analysis..."
-            )
+            self.usage_logger.info(self.i18n.get("usage_analyzer_starting"))
         if self.speed_logger:
-            self.speed_logger.info(
-                f"{NETWORK_SPEED_ANALYZER}: Starting the analysis..."
-            )
+            self.speed_logger.info(self.i18n.get("speed_analyzer_starting"))
 
         if not self.infinite_analysis:
             if hasattr(signal, "SIGALRM"):
@@ -220,24 +249,16 @@ class Menu:
         if download_speed is not None and upload_speed is not None:
             self.speed_analyzer.write_to_csv(download_speed, upload_speed)
 
-    def exit_gracefully(self, signum, frame):
+    def exit_gracefully(self, signum=None, frame=None):
         if self.usage_logger:
-            self.usage_logger.info(
-                f"{NETWORK_USAGE_ANALYZER}: Received exit signal. Cleaning up..."
-            )
+            self.usage_logger.info(self.i18n.get("received_exit_signal"))
         if self.speed_logger:
-            self.speed_logger.info(
-                f"{NETWORK_SPEED_ANALYZER}: Received exit signal. Cleaning up..."
-            )
+            self.speed_logger.info(self.i18n.get("received_exit_signal"))
         schedule.clear()
         if self.plotter:
             self.plotter.plot_graphs(self.xtick_interval)
+        print(self.i18n.get("analysis_stopped_plotted"))
         sys.exit(0)
 
     def exit_program(self):
-        if self.usage_logger:
-            self.usage_logger.info(f"{NETWORK_USAGE_ANALYZER}: Exiting program...")
-        if self.speed_logger:
-            self.speed_logger.info(f"{NETWORK_SPEED_ANALYZER}: Exiting program...")
-        schedule.clear()
-        sys.exit(0)
+        self.exit_gracefully()
