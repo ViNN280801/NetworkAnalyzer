@@ -22,9 +22,6 @@ dist/
 # .spec files
 *.spec
 
-# Ignoring pictures
-*.png
-
 # Any output files
 output/
 out/
