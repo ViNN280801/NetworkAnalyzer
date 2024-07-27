@@ -21,3 +21,7 @@ dist/
 
 # Ignoring pictures
 .png
+
+# Any output files
+output/
+out/
