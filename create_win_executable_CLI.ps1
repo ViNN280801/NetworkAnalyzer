@@ -62,5 +62,6 @@ Write-Host "Running PyInstaller..."
     --hidden-import "pandas" `
     --hidden-import "matplotlib" `
     --hidden-import "numpy" `
-    --hidden-import "speedtest-cli" `
+    --hidden-import "speedtest" `
+    --hidden-import "json" `
     $mainScriptPath

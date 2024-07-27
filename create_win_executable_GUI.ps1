@@ -46,7 +46,6 @@ Write-Host "Installing dependencies from requirements.txt..."
 
 # Define relative paths
 $scriptPath = (Get-Location).Path
-$imgsPath = Join-Path $scriptPath "imgs"
 $utilPath = Join-Path $scriptPath "util"
 $networkAnalyzerPath = Join-Path $scriptPath "network_analyzer"
 $initPath = Join-Path $scriptPath "__init__.py"
@@ -54,8 +53,7 @@ $mainScriptPath = Join-Path $scriptPath "na-gui.py"
 
 # Run PyInstaller
 Write-Host "Running PyInstaller..."
-& $pythonPath -m PyInstaller --noconfirm --onefile --console --name "na-gui" --log-level "INFO" `
-    --add-data "$imgsPath;img/" `
+& $pythonPath -m PyInstaller --noconfirm --onefile --name "na-gui" --log-level "INFO" `
     --add-data "$utilPath;util/" `
     --add-data "$networkAnalyzerPath;network_analyzer/" `
     --add-data "$initPath;." `
@@ -64,6 +62,7 @@ Write-Host "Running PyInstaller..."
     --hidden-import "pandas" `
     --hidden-import "matplotlib" `
     --hidden-import "numpy" `
-    --hidden-import "speedtest-cli" `
+    --hidden-import "speedtest" `
     --hidden-import "PyQt5" `
+    --hidden-import "json" `
     $mainScriptPath
