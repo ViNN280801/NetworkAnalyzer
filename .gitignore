@@ -7,11 +7,11 @@ __pycache__/
 
 # Log files
 logs/
-.log
+*.log
 
 # Data files
 results/
-.csv
+*.csv
 
 # Any build files
 build/
@@ -20,7 +20,7 @@ build/
 dist/
 
 # Ignoring pictures
-.png
+*.png
 
 # Any output files
 output/
