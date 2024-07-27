@@ -10,6 +10,62 @@ class GraphPlotter:
         self.network_usage_file = network_usage_file
         self.network_speed_file = network_speed_file
 
+    def plot_speed_graph(self, file, ax, xticks):
+        """
+        Plot speed graph from the given file.
+
+        Args:
+            file (str): The file path to plot data from.
+            ax (matplotlib.axes.Axes): The axes to plot the graph on.
+            xticks (int): Interval for X-ticks in graphs.
+        """
+        data = pd.read_csv(file)
+        ax.plot(
+            data["timestamp"],
+            data["download_speed"] / 1_000_000,
+            label="Download Speed (Mbps)",
+        )
+        ax.plot(
+            data["timestamp"],
+            data["upload_speed"] / 1_000_000,
+            label="Upload Speed (Mbps)",
+        )
+        ax.set_xlabel("Time (HH:MM)")
+        ax.set_ylabel("Speed (Mbps)")
+        ax.set_title("Network Speed Over Time")
+        ax.legend()
+        ax.grid(True)
+        ax.set_xticks(ax.get_xticks()[::xticks])
+        plt.xticks(rotation=45)
+
+    def plot_usage_graph(self, file, ax, xticks):
+        """
+        Plot usage graph from the given file.
+
+        Args:
+            file (str): The file path to plot data from.
+            ax (matplotlib.axes.Axes): The axes to plot the graph on.
+            xticks (int): Interval for X-ticks in graphs.
+        """
+        data = pd.read_csv(file)
+        ax.plot(
+            data["timestamp"],
+            data["sent_bytes"] / (1024 * 1024),
+            label="Sent Data (MB)",
+        )
+        ax.plot(
+            data["timestamp"],
+            data["recv_bytes"] / (1024 * 1024),
+            label="Received Data (MB)",
+        )
+        ax.set_xlabel("Time (HH:MM)")
+        ax.set_ylabel("Data (MB)")
+        ax.set_title("Network Data Usage Over Time")
+        ax.legend()
+        ax.grid(True)
+        ax.set_xticks(ax.get_xticks()[::xticks])
+        plt.xticks(rotation=45)
+
     def plot_graphs(self, xticks: int, save_path: str = "network_graphs.png"):
         """
         Plots the network usage and speed graphs from the given CSV files and saves them as a PNG file.
