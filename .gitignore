@@ -19,6 +19,11 @@ build/
 # Pyinstaller directory
 dist/
 
+# Some of image extensions
+*.png
+*.jpg
+*.jpeg
+
 # .spec files
 *.spec
 
