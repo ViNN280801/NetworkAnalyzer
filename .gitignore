@@ -19,6 +19,9 @@ build/
 # Pyinstaller directory
 dist/
 
+# .spec files
+*.spec
+
 # Ignoring pictures
 *.png
 
