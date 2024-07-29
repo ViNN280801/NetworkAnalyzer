@@ -46,6 +46,7 @@ Write-Host "Installing dependencies from requirements.txt..."
 
 # Define relative paths
 $scriptPath = (Get-Location).Path
+$langsPath = Join-Path $scriptPath "langs"
 $utilPath = Join-Path $scriptPath "util"
 $networkAnalyzerPath = Join-Path $scriptPath "network_analyzer"
 $initPath = Join-Path $scriptPath "__init__.py"
@@ -53,7 +54,8 @@ $mainScriptPath = Join-Path $scriptPath "na-gui.py"
 
 # Run PyInstaller
 Write-Host "Running PyInstaller..."
-& $pythonPath -m PyInstaller --noconfirm --onefile --name "na-gui" --log-level "INFO" `
+& $pythonPath -m PyInstaller --noconfirm --onedir --name "na-gui" --log-level "INFO" `
+    --add-data "$langsPath;langs/" `
     --add-data "$utilPath;util/" `
     --add-data "$networkAnalyzerPath;network_analyzer/" `
     --add-data "$initPath;." `
@@ -66,3 +68,7 @@ Write-Host "Running PyInstaller..."
     --hidden-import "PyQt5" `
     --hidden-import "json" `
     $mainScriptPath
+
+Write-Host "Moving langs directory to the correct location..."
+$distDir = Join-Path $scriptPath "dist\na-gui"
+Move-Item -Path "$distDir\_internal\langs" -Destination "$distDir\langs"
