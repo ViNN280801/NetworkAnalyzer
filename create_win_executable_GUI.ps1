@@ -47,6 +47,7 @@ Write-Host "Installing dependencies from requirements.txt..."
 # Define relative paths
 $scriptPath = (Get-Location).Path
 $langsPath = Join-Path $scriptPath "langs"
+$imgsPath = Join-Path $scriptPath "imgs"
 $utilPath = Join-Path $scriptPath "util"
 $networkAnalyzerPath = Join-Path $scriptPath "network_analyzer"
 $initPath = Join-Path $scriptPath "__init__.py"
@@ -72,3 +73,4 @@ Write-Host "Running PyInstaller..."
 Write-Host "Moving langs directory to the correct location..."
 $distDir = Join-Path $scriptPath "dist\na-gui"
 Move-Item -Path "$distDir\_internal\langs" -Destination "$distDir\langs"
+Copy-Item -Path $imgsPath -Destination "$distDir\imgs"
